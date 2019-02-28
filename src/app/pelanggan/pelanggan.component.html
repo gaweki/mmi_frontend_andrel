@@ -1,0 +1,106 @@
+<div class="container">
+  <div class="text-right d-flex align-items-end justify-content-end" *ngIf="showTable">
+    <input class="form-control w-25 mr-3" type="text" name="search" [(ngModel)]="filter" placeholder="Input Pencarian" /> 
+    <button type="submit" class="btn text-dark bg-transparent border" (click)="onNew()"><i class="fa fa-plus"></i> Tambah data pelanggan</button>
+    <div class="form-group mb-0">
+      <div class="col-10 dropdown" ngbDropdown myDrop="ngbDropdown">
+        <button type="button" class="btn btn-outline-primary" id="dropdownManual" name="perpageitem" ngbDropdownToggle>{{perpageItem}}</button>
+        <div ngbDropdownMenu aria-labelledby="dropdownManual"> 
+          <button type="button" class="dropdown-item" *ngFor="let items of pageItemList" (click)="onChangeTotalData(items)">{{items}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="reglist mt-3">
+    <table class="table table-striped" *ngIf="showTable">
+      <thead>
+        <tr>
+          <th width="5%">No</th>
+          <th>Nama</th>
+          <th>Alamat</th>
+          <th>Bidang Usaha</th>
+          <th>Mulai Kerjasama</th>
+          <th>Nilai Kontrak</th>
+          <th>Bukti Kerjasama</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pelanggan of pelanggans | paginate: { itemsPerPage: perpageItem, currentPage: p } | filter:filter ; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ pelanggan.name }}</td>
+          <td>{{ pelanggan.alamat }}</td>
+          <td>{{ pelanggan.bidang_usaha }}</td>
+          <td>{{ pelanggan.mulai.day + '/' + pelanggan.mulai.month + '/' + pelanggan.mulai.year}}</td>
+          <td>{{ pelanggan.kontrak }} {{ pelanggan.currency }}</td>
+          <td>{{ pelanggan.bukti }}</td> 
+          <td>
+            <button type="button" class="btn btn-info" (click)="onEdit(i)"><i class="fa fa-pencil"></i></button>
+            <button type="button" class="btn btn-danger" (click)="onDelete(i)"><i class="fa fa-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+      </tfoot>
+    </table>
+  </div>
+  <br>
+  <div class="regentry" *ngIf="showNew">
+    <form (ngSubmit)="onSave()">
+      <div class="form-group row">
+        <label for="firstname-input" class="col-2 col-form-label">Nama <span class="text-danger">*)</span></label>
+        <div class="col-10">
+          <input class="form-control" type="text" [(ngModel)]="regModel.name" name="name">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="lastname-input" class="col-2 col-form-label">Alamat <span class="text-danger">*)</span></label>
+        <div class="col-10">
+          <input class="form-control" type="text" [(ngModel)]="regModel.alamat" name="alamat">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="city-input" class="col-2 col-form-label">Bidang Usaha <span class="text-danger">*)</span></label>
+        <div class="col-10 dropdown" ngbDropdown myDrop="ngbDropdown">
+          <button type="button" class="btn btn-outline-primary" id="dropdownManual" name="bidang_usaha" ngbDropdownToggle>{{regModel.bidang_usaha}}</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownManual">
+            <button type="button" class="dropdown-item" *ngFor="let bidang of usaha" (click)="onChangeBidangUsaha(bidang)">{{bidang}}</button>
+          </div>
+        </div>
+      </div> 
+      <div class="form-group row">
+        <label for="mulai-input" class="col-2 col-form-label">Mulai Kerjasama <span class="text-danger">*)</span></label>
+        <div class="col-3 input-group">
+          <input type="text" class="form-control" placeholder="yyyy-mm-dd" name="mulai" [(ngModel)]="regModel.mulai" ngbDatepicker #mulai="ngbDatepicker">
+          <button class="input-group-addon" (click)="mulai.toggle()" type="button">
+            <img src="assets/img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;" />
+          </button>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="example-password-input" class="col-2 col-form-label">Nilai Kontrak <span class="text-danger">*)</span></label>
+        <div class="col-7">
+          <input class="form-control" type="number" [(ngModel)]="regModel.kontrak" name="kontrak">
+        </div>
+        <div class="col-3 dropdown" ngbDropdown myDrop="ngbDropdown">
+          <button type="button" class="btn btn-outline-primary" id="dropdownManual" name="currency" ngbDropdownToggle>{{regModel.currency}}</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownManual">
+            <button type="button" class="dropdown-item" *ngFor="let uang of currency" (click)="onChangeCurrency(uang)">{{uang}}</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="example-password-input" class="col-2 col-form-label">Bukti Kerjasama <span class="text-danger">*)</span></label>
+        <div class="col-10">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile" [(ngModel)]="regModel.bukti" (change)="onFileSelected($event)" name="bukti">
+            <label class="custom-file-label" for="customFile">{{regModel.bukti}}</label>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success">{{submitType}}</button>
+      <button type="submit" class="btn btn-primary" (click)="onCancel()">Cancel</button>
+    </form>
+  </div>
+</div>
